@@ -17,22 +17,22 @@ export class App extends Component {
   };
 
   componentDidUpdate(prevProbs, prevState) {
-    const { page, nameImage, fetchedImage } = this.state;
+    const { page, nameImage } = this.state;
 
     if (
-      (prevState.page !== page || prevState.nameImage !== nameImage) &&
-      (prevState.fetchedImage !== fetchedImage || prevState.page !== page)
+      nameImage &&
+      (nameImage !== prevState.nameImage || prevState.page !== page)
     ) {
       this.setState({ loading: true });
-      setTimeout(() => {
-        fetchImage(nameImage, page)
-          .then(({ data: { hits } }) => {
-            this.setState(prevState => ({
-              fetchedImage: [...prevState.fetchedImage, ...hits],
-            }));
-          })
-          .finally(() => this.setState({ loading: false }));
-      }, 1000);
+      fetchImage(nameImage, page)
+        .then(({ data: { hits, totalHits } }) => {
+          this.setState(prevState => ({
+            fetchedImage: [...prevState.fetchedImage, ...hits],
+            totalHits,
+          }));
+        })
+
+        .finally(() => this.setState({ loading: false }));
     }
   }
 
@@ -55,7 +55,8 @@ export class App extends Component {
   };
   render() {
     const { formSubmitHandler, loadMore, togleModal, takeLargeImgUrl } = this;
-    const { fetchedImage, loading, showModal, largeImgUrl } = this.state;
+    const { fetchedImage, loading, showModal, largeImgUrl, totalHits } =
+      this.state;
     return (
       <>
         <Searchbar onSubmit={formSubmitHandler} />
@@ -64,17 +65,25 @@ export class App extends Component {
           togleModal={togleModal}
           takeLargeImgUrl={takeLargeImgUrl}
         />
-        {fetchedImage.length > 0 && <Button loadMore={loadMore} />}
-        {loading && <Loader />}
+        {fetchedImage.length !== 0 && fetchedImage.length < totalHits && (
+          <Button loadMore={loadMore} />
+        )}
+        {loading && (
+          <Modal>
+            <Loader />
+          </Modal>
+        )}
         {showModal && (
           <Modal onClose={togleModal}>
-            <img src={largeImgUrl} alt="" />{' '}
+            <img src={largeImgUrl} alt="" />
           </Modal>
         )}
       </>
     );
   }
 }
+// this.state.renderImages.length !== 0 &&
+//   this.state.renderImages.length < this.state.totalItems;
 
 // const { fetchedImage, status } = this.state;
 // if (status === 'idle') {
