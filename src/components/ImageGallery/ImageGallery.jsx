@@ -7,11 +7,11 @@ export default function ImageGallery({
 }) {
   return (
     <Gallery>
-      {fetchedImage.map(({ id, webformatURL, largeImageURL }) => (
+      {fetchedImage.map(({ id, webformatURL, largeImageURL }, index) => (
         <ImageGalleryItem
           takeLargeImgUrl={takeLargeImgUrl}
           togleModal={togleModal}
-          key={id}
+          key={id + index}
           webformatURL={webformatURL}
           largeImageURL={largeImageURL}
         />
