@@ -16,9 +16,8 @@ export class App extends Component {
     largeImgUrl: '',
   };
 
-  componentDidUpdate(prevProbs, prevState) {
+  componentDidUpdate(_, prevState) {
     const { page, nameImage } = this.state;
-
     if (
       nameImage &&
       (nameImage !== prevState.nameImage || prevState.page !== page)
@@ -31,11 +30,17 @@ export class App extends Component {
             totalHits,
           }));
         })
-
+        .catch(error => console.log(error))
         .finally(() => this.setState({ loading: false }));
     }
   }
-
+  shouldComponentUpdate(_, nextState) {
+    const { nameImage } = this.state;
+    if (nameImage === nextState.nameImage) {
+      return false;
+    }
+    return true;
+  }
   formSubmitHandler = nameImage => {
     this.setState({ page: 1, nameImage, fetchedImage: [] });
   };
