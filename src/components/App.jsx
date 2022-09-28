@@ -25,26 +25,22 @@ export class App extends Component {
       this.setState({ loading: true });
       fetchImage(nameImage, page)
         .then(({ data: { hits, totalHits } }) => {
-          if (nameImage !== prevState.nameImage) {
-            this.setState({
-              fetchedImage: hits,
-              totalHits,
-            });
-          } else {
-            this.setState(prevState => ({
-              fetchedImage: [...prevState.fetchedImage, ...hits],
-            }));
-          }
+          this.setState(prevState => ({
+            fetchedImage: [...prevState.fetchedImage, ...hits],
+            totalHits,
+          }));
         })
         .catch(error => console.log(error))
         .finally(() => this.setState({ loading: false }));
     }
   }
 
-  formSubmitHandler = nameImage => {
-    this.setState({ page: 1, nameImage });
+  formSubmitHandler = newNameImage => {
+    if (newNameImage !== this.state.nameImage) {
+      this.setState({ page: 1, nameImage: newNameImage, fetchedImage: [] });
+    }
   };
-  // fetchedImage: []
+
   loadMore = () => {
     this.setState(prevState => ({
       page: prevState.page + 1,
