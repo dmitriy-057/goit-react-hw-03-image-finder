@@ -5,6 +5,8 @@ import fetchImage from '../utils/fetchImage';
 import Button from './Button';
 import Loader from './Loader';
 import Modal from './Modal/Modal';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export class App extends Component {
   state = {
@@ -17,7 +19,8 @@ export class App extends Component {
   };
 
   componentDidUpdate(_, prevState) {
-    const { page, nameImage } = this.state;
+    const { page, nameImage, fetchedImage } = this.state;
+    const { notify } = this;
     if (
       nameImage &&
       (nameImage !== prevState.nameImage || prevState.page !== page)
@@ -31,12 +34,32 @@ export class App extends Component {
           }));
         })
         .catch(error => console.log(error))
-        .finally(() => this.setState({ loading: false }));
+        .finally(() => {
+          this.setState({ loading: false });
+          if (!fetchedImage.length) {
+            notify();
+          }
+        });
     }
+    //  else if (!fetchedImage.length) {
+    //   console.log('jdhdhd');
+    //   notify();
+    // }}
   }
+  //  console.log(fetchedImage);
+  //         if (fetchedImage.length === 0) {
+  //           notify();
+  //         }
+  // const { notify } = this;
+  //  const { notify } = this;
+  //   if (fetchedImage.length === 0) {
+  //     notify()
+  //     return;
+  //   }
 
   formSubmitHandler = newNameImage => {
-    if (newNameImage !== this.state.nameImage) {
+    const { nameImage } = this.state;
+    if (newNameImage !== nameImage) {
       this.setState({ page: 1, nameImage: newNameImage, fetchedImage: [] });
     }
   };
@@ -54,6 +77,7 @@ export class App extends Component {
   takeLargeImgUrl = newUrl => {
     this.setState({ largeImgUrl: newUrl });
   };
+  notify = () => toast('Not Found Image');
   render() {
     const { formSubmitHandler, loadMore, togleModal, takeLargeImgUrl } = this;
     const { fetchedImage, loading, showModal, largeImgUrl, totalHits } =
@@ -79,33 +103,8 @@ export class App extends Component {
             <img src={largeImgUrl} alt="" />
           </Modal>
         )}
+        <ToastContainer />
       </>
     );
   }
 }
-// this.state.renderImages.length !== 0 &&
-//   this.state.renderImages.length < this.state.totalItems;
-
-// const { fetchedImage, status } = this.state;
-// if (status === 'idle') {
-//   return <Searchbar onSubmit={formSubmitHandler} />;
-// }
-// if (status === 'pending') {
-//   return (
-//     <>
-//       <Searchbar onSubmit={formSubmitHandler} /> <Loader />;
-//     </>
-//   );
-// }
-// if (status === 'rejected') {
-//   return <h2>ошибка </h2>;
-// }
-// if (status === 'resolved') {
-//   return (
-//     <>
-//       <Searchbar onSubmit={formSubmitHandler} />;
-//       <ImageGallery fetchedImage={fetchedImage} />
-//       {fetchedImage.length > 0 && <Button loadMore={loadMore} />}
-//     </>
-//   );
-// }
