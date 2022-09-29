@@ -1,5 +1,6 @@
 import ImageGalleryItem from 'components/ImageGalleryItem';
 import { Gallery } from './ImageGallery.styled';
+
 export default function ImageGallery({
   fetchedImage,
   togleModal,

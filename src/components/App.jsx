@@ -19,7 +19,7 @@ export class App extends Component {
   };
 
   componentDidUpdate(_, prevState) {
-    const { page, nameImage, fetchedImage } = this.state;
+    const { page, nameImage } = this.state;
     const { notify } = this;
     if (
       nameImage &&
@@ -32,35 +32,27 @@ export class App extends Component {
             fetchedImage: [...prevState.fetchedImage, ...hits],
             totalHits,
           }));
+          console.log('hits', hits);
+          if (!hits.length) {
+            notify();
+          }
         })
         .catch(error => console.log(error))
         .finally(() => {
           this.setState({ loading: false });
-          if (!fetchedImage.length) {
-            notify();
-          }
         });
     }
-    //  else if (!fetchedImage.length) {
-    //   console.log('jdhdhd');
-    //   notify();
-    // }}
   }
-  //  console.log(fetchedImage);
-  //         if (fetchedImage.length === 0) {
-  //           notify();
-  //         }
-  // const { notify } = this;
-  //  const { notify } = this;
-  //   if (fetchedImage.length === 0) {
-  //     notify()
-  //     return;
-  //   }
 
   formSubmitHandler = newNameImage => {
     const { nameImage } = this.state;
+
     if (newNameImage !== nameImage) {
-      this.setState({ page: 1, nameImage: newNameImage, fetchedImage: [] });
+      this.setState({
+        page: 1,
+        nameImage: newNameImage,
+        fetchedImage: [],
+      });
     }
   };
 
